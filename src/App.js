@@ -1,6 +1,13 @@
 import React from 'react';
 import { Provider, useSelector } from 'react-redux';
 import { createSlice, configureStore } from '@reduxjs/toolkit';
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Link,
+    useParams,
+} from 'react-router-dom';
 import { NFTStorage, Blob } from 'nft.storage';
 import './App.css';
 
@@ -172,14 +179,65 @@ function MintBar() {
     );
 }
 
+function Editor() {
+    return (
+        <div className="Editor">
+            <MintBar />
+            <ColorPicker />
+            <Pfp />
+        </div>
+    );
+}
+
+function Home() {
+    return (
+        <div className="Home">
+            <h1>pfper</h1>
+            <p>Draw your own pixelart!</p>
+            <p>Upload it to IPFS, mint it as an ERC-721 to Arbitrum.</p>
+            <p>Keep it, use it as your PFP, sell it, give it away. Whatever you wanna do, it's yours.</p>
+            <p>The only restriction is that you cannot mint something that has already been minted, either by you or anyone else. Every one of these is guaranteed to be unique.</p>
+            <p><Link to="/editor">Enter the Editor!</Link></p>
+            <p>If you want to be able to mint it, <a href="#">connect your wallet</a>.</p>
+            <p>It's all open source, too, so...</p>
+            <ul>
+                <li><a href="#">Github: App</a></li>
+                <li><a href="#">Github: Contract</a></li>
+                <li><a href="#">Arbiscan: Contract</a></li>
+            </ul>
+        </div>
+    );
+}
+
+function Token() {
+    const { tokenId } = useParams();
+    return (
+        <div className="Token">
+            <h1>pfper #{tokenId}</h1>
+        </div>
+    );
+}
+
+function Address() {
+    const { address } = useParams();
+    return (
+        <div className="Address">
+            <h1>{address}</h1>
+        </div>
+    );
+}
+
 function App() {
     return (
         <Provider store={store}>
-            <div className="App">
-                <MintBar />
-                <ColorPicker />
-                <Pfp />
-            </div>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/editor" element={<Editor />} />
+                    <Route path="/token/:tokenId" element={<Token />} />
+                    <Route path="/address/:address" element={<Address />} />
+                </Routes>
+            </Router>
         </Provider>
     );
 }
