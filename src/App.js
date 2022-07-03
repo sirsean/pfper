@@ -68,10 +68,10 @@ const selectColorMatrix = state => state.colorMatrix;
 const selectColorIndex = state => state.colorIndex;
 const selectRenderedSvg = state => {
     const cm = selectColorMatrix(state);
-    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${GRID_SIZE} ${GRID_SIZE}>`;
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${GRID_SIZE} ${GRID_SIZE}">`;
     for (let x=0; x < cm.length; x++) {
         for (let y=0; y < cm[x].length; y++) {
-            svg += `<rect width="1" height="1" x="${x}" y="${y}" fill="${cm[x][y]}" />`;
+            svg += `<rect width="1" height="1" x="${x}" y="${y}" fill="${colors[cm[x][y]]}" />`;
         }
     }
     svg += `</svg>`;
@@ -211,9 +211,15 @@ function Home() {
 
 function Token() {
     const { tokenId } = useParams();
+    const cid = 'bafkreicqlf73rwli63jtlh4g64lj63esgoi4ddssewaazz62crst3s7tya';
+    const tokenCid = `ipfs://${cid}`;
+    const url = tokenCid.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/');
     return (
         <div className="Token">
-            <h1>pfper #{tokenId}</h1>
+            <div className="pfp" style={{width: GRID_SIZE * CELL_SIZE, height: GRID_SIZE * CELL_SIZE}}>
+                <h1>pfper #{tokenId}</h1>
+                <object data={url} type="image/svg+xml">{tokenCid}</object>
+            </div>
         </div>
     );
 }

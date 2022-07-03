@@ -13,6 +13,9 @@
 }
 
 .pfp {
-    border: 1px solid black;
     margin: 0 auto;
+}
+
+.pfp object, .pfp svg {
+    border: 1px solid black;
 }
