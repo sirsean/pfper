@@ -5,6 +5,11 @@ const abi = [
         "internalType": "uint256",
         "name": "cost",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sellerFeeBasisPoints",
+        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -193,6 +198,19 @@ const abi = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getSellerFeeBasisPoints",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -359,6 +377,19 @@ const abi = [
       }
     ],
     "name": "setCost",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "sellerFeeBasisPoints",
+        "type": "uint256"
+      }
+    ],
+    "name": "setSellerFeeBasisPoints",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
