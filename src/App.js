@@ -357,11 +357,11 @@ function Home() {
         <div className="Home">
             <h1>pfper</h1>
             <p>Draw your own pixelart!</p>
-            <p>Upload it to IPFS, mint it as an ERC-721 to Arbitrum.</p>
+            <p>Upload it to IPFS, mint it as an ERC-721 to {NETWORK_PARAMS.chainName}.</p>
             <p>Keep it, use it as your PFP, sell it, give it away. Whatever you wanna do, it's yours.</p>
             <p>The point is that it will exist forever and you don't have to rely on me or this dumb website. You draw your pixelart and store it on the internet, and it'll always be there.</p>
             <p>The only restriction is that you cannot mint something that has already been minted, either by you or anyone else. Every one of these is guaranteed to be unique.</p>
-            <p><Link to="/editor">Enter the Editor!</Link></p>
+            <p><Link to="/editor" style={{fontSize: '2.0em'}}>Enter the Editor!</Link></p>
             {window.ethereum && address && <p>You have connected your wallet: <Link to={`/address/${address}`}>{address}</Link>.</p>}
             {window.ethereum && !address && <p>If you want to be able to mint it, <button onClick={connectWalletOnClick}>connect your wallet</button>.</p>}
             {!window.ethereum && <p>In you want to be able to mint it, you will need to install a wallet.</p>}
@@ -397,8 +397,8 @@ function SwitchChain() {
     }
     return (
         <div className="SwitchChain">
-            <p>to read this data from the blockchain, you need to switch your wallet to Arbitrum</p>
-            <p><button onClick={onClick}>Switch to Arbitrum</button></p>
+            <p>to read this data from the blockchain, you need to switch your wallet to {NETWORK_PARAMS.chainName}</p>
+            <p><button onClick={onClick}>Switch to {NETWORK_PARAMS.chainName}</button></p>
         </div>
     );
 }
