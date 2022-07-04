@@ -359,6 +359,7 @@ function Home() {
             <p>Draw your own pixelart!</p>
             <p>Upload it to IPFS, mint it as an ERC-721 to Arbitrum.</p>
             <p>Keep it, use it as your PFP, sell it, give it away. Whatever you wanna do, it's yours.</p>
+            <p>The point is that it will exist forever and you don't have to rely on me or this dumb website. You draw your pixelart and store it on the internet, and it'll always be there.</p>
             <p>The only restriction is that you cannot mint something that has already been minted, either by you or anyone else. Every one of these is guaranteed to be unique.</p>
             <p><Link to="/editor">Enter the Editor!</Link></p>
             {window.ethereum && address && <p>You have connected your wallet: <Link to={`/address/${address}`}>{address}</Link>.</p>}
