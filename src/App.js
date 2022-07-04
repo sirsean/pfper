@@ -19,7 +19,8 @@ const NFT_STORAGE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaW
 const nftStorageClient = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 const HARDHAT_PFPER = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
-const PFPER_CONTRACT_ADDRESS = HARDHAT_PFPER;
+const ARBITRUM_PFPER = '';
+const PFPER_CONTRACT_ADDRESS = HARDHAT_PFPER; // MAKE SURE TO COMMIT THE RIGHT ONE
 
 const HARDHAT_PARAMS = {
     chainId: ethers.BigNumber.from(31337).toHexString(),
@@ -32,7 +33,19 @@ const HARDHAT_PARAMS = {
     rpcUrls: ['http://localhost:8545'],
 };
 
-const NETWORK_PARAMS = HARDHAT_PARAMS;
+const ARBITRUM_PARAMS = {
+    chainId: ethers.BigNumber.from(42161).toHexString(),
+    chainName: 'Arbitrum',
+    nativeCurrency: {
+        name: 'ETH',
+        symbol: 'ETH',
+        decimals: 18,
+    },
+    rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://arbiscan.io/'],
+};
+
+const NETWORK_PARAMS = HARDHAT_PARAMS; // MAKE SURE TO COMMIT THE RIGHT ONE
 
 function loadContract(isSigner) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
