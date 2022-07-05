@@ -373,6 +373,7 @@ function Home() {
             <p>Upload it to IPFS, mint it as an ERC-721 to {NETWORK_PARAMS.chainName}.</p>
             <p>Keep it, use it as your PFP, sell it, give it away. Whatever you wanna do, it's yours.</p>
             <p>The point is that it will exist forever and you don't have to rely on me or this dumb website. You draw your pixelart and store it on the internet, and it'll always be there.</p>
+            <p>Note that this is not some hype project. You draw a pfper, and you pay to have it recorded and saved and available. I have no idea if someone will value your effort higher than what it cost for you to mint it.</p>
             <p>The only restriction is that you cannot mint something that has already been minted, either by you or anyone else. Every one of these is guaranteed to be unique.</p>
             <p className="editor-link"><Link to="/editor">Enter the Editor!</Link></p>
             {window.ethereum && address && <p>You have connected your wallet: <Link to={`/address/${address}`}>{address}</Link>.</p>}
