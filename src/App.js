@@ -19,8 +19,8 @@ const NFT_STORAGE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaW
 const nftStorageClient = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 const HARDHAT_PFPER = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-const ARBITRUM_PFPER = '';
-const PFPER_CONTRACT_ADDRESS = HARDHAT_PFPER; // MAKE SURE TO COMMIT THE RIGHT ONE
+const ARBITRUM_PFPER = '0xCF4fD95771aeB088c50Aec7Ea8Df8C11c034ffB3';
+const PFPER_CONTRACT_ADDRESS = ARBITRUM_PFPER; // MAKE SURE TO COMMIT THE RIGHT ONE
 
 const HARDHAT_PARAMS = {
     chainId: ethers.BigNumber.from(31337).toHexString(),
@@ -45,7 +45,7 @@ const ARBITRUM_PARAMS = {
     blockExplorerUrls: ['https://arbiscan.io/'],
 };
 
-const NETWORK_PARAMS = HARDHAT_PARAMS; // MAKE SURE TO COMMIT THE RIGHT ONE
+const NETWORK_PARAMS = ARBITRUM_PARAMS; // MAKE SURE TO COMMIT THE RIGHT ONE
 
 function loadContract(isSigner) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -381,9 +381,9 @@ function Home() {
             {!window.ethereum && <p>In you want to be able to mint it, you will need to install a wallet.</p>}
             <p>You may feel more confident if you can read what the code is going to do, so here's some links:</p>
             <ul>
-                <li><a href="#">Github: App</a></li>
-                <li><a href="#">Github: Contract</a></li>
-                <li><a href="#">Arbiscan: Contract</a></li>
+                <li><a href="https://github.com/sirsean/pfper" target="_blank" rel="noreferrer">Github: App</a></li>
+                <li><a href="https://github.com/sirsean/pfper-contract" target="_blank" rel="noreferrer">Github: Contract</a></li>
+                <li><a href="https://arbiscan.io/address/0xcf4fd95771aeb088c50aec7ea8df8c11c034ffb3" target="_blank" rel="noreferrer">Arbiscan: Contract</a></li>
             </ul>
         </div>
     );
