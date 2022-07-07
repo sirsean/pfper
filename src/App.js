@@ -455,6 +455,7 @@ function Token() {
                             <tbody>
                                 <tr><th>Owner</th><td><Link to={ownerHref}>{token.owner}</Link></td></tr>
                                 <tr><th>Author</th><td><Link to={authorHref}>{token.author}</Link></td></tr>
+                                <tr><th>Download</th><td><a href={url} target="_blank" rel="noreferrer">SVG</a></td></tr>
                             </tbody>
                         </table>
                     </div>

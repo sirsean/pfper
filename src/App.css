@@ -40,6 +40,15 @@ button {
     width: 800px;
 }
 
+.Token table {
+    padding: 16px;
+}
+
+.Token table th {
+    text-align: left;
+    padding-right: 8px;
+}
+
 .Address {
     margin: 0 auto;
     width: 800px;
