@@ -233,15 +233,15 @@ async function connectWalletOnClick(e) {
 
 function svgPaint(p, elem) {
     const rect = elem.getBoundingClientRect();
-    const x = Math.floor((p.screenX - rect.left) / CELL_SIZE);
-    const y = Math.floor((p.screenY - rect.top) / CELL_SIZE);
+    const x = Math.floor((p.x - rect.left) / CELL_SIZE);
+    const y = Math.floor((p.y - rect.top) / CELL_SIZE);
     store.dispatch(setColor({ x, y }));
 }
 
 function svgOnClick(e) {
     const point = {
-        screenX: e.screenX,
-        screenY: e.screenY,
+        x: e.clientX,
+        y: e.clientY,
     };
     svgPaint(point, e.target.parentElement);
 }
@@ -249,8 +249,8 @@ function svgOnClick(e) {
 function svgOnMouseMove(e) {
     if (e.buttons > 0) {
         const point = {
-            screenX: e.screenX,
-            screenY: e.screenY,
+            x: e.clientX,
+            y: e.clientY,
         };
         svgPaint(point, e.target.parentElement);
     }
@@ -259,8 +259,8 @@ function svgOnMouseMove(e) {
 function svgOnTouchMove(e) {
     const touch = e.touches[0];
     const point = {
-        screenX: touch.screenX,
-        screenY: touch.screenY,
+        x: touch.clientX,
+        y: touch.clientY,
     }
     svgPaint(point, e.target.parentElement);
 }
@@ -292,7 +292,7 @@ function ColorPicker() {
     const viewBox = `0 0 ${colors.length} 1`;
     const onClick = (e) => {
         const elem = e.target.parentElement.getBoundingClientRect();
-        store.dispatch(setColorIndex(Math.floor(colors.length * ((e.screenX - elem.left) / elem.width))));
+        store.dispatch(setColorIndex(Math.floor(colors.length * ((e.clientX - elem.left) / elem.width))));
     }
     return (
         <div className="ColorPicker">
