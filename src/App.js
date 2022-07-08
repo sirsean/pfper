@@ -1,6 +1,5 @@
 import React from 'react';
 import { Provider, useSelector } from 'react-redux';
-import { createSlice, configureStore } from '@reduxjs/toolkit';
 import {
     BrowserRouter as Router,
     Routes,
@@ -13,7 +12,9 @@ import { NFTStorage, Blob } from 'nft.storage';
 import { ethers } from 'ethers';
 import PfperABI from './Pfper.js';
 import './App.css';
-//
+import { GRID_SIZE, CELL_SIZE, COLORS } from './constants.js';
+import { store, actions, selectors } from './database.js';
+
 // MAKE SURE TO ONLY INCLUDE THE RIGHT NETWORK
 import { PFPER_CONTRACT_ADDRESS, NETWORK_PARAMS } from './network/arbitrum.js';
 //import { PFPER_CONTRACT_ADDRESS, NETWORK_PARAMS } from './network/hardhat.js';
@@ -36,81 +37,6 @@ function wrapIpfs(url) {
     return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
 }
 
-const GRID_SIZE = 32;
-const CELL_SIZE = 25;
-
-const colors = [
-    '#FCFBED', // navajo cream
-    '#1F170C', // not black
-    '#802E36', // apple blossom
-    '#2E79BF', // wells beach
-    '#26A38E', // northern lights
-    '#A85516', // caramel square
-    '#FACF32', // jacks pot
-    '#4C379E', // blackened periwinkle
-];
-
-const initialColorMatrix = (size) => {
-    let rows = new Array(size);
-    for (let x=0; x < size; x++) {
-        rows[x] = new Array(size);
-        for (let y=0; y < size; y++) {
-            rows[x][y] = 0;
-        }
-    }
-    return rows;
-}
-
-const slice = createSlice({
-    name: 'pfper',
-    initialState: {
-        hasWallet: false,
-        isCorrectChain: false,
-        address: null,
-        cost: null,
-        addressTokens: {},
-        tokens: {},
-        colorMatrix: initialColorMatrix(GRID_SIZE),
-        colorIndex: 0,
-    },
-    reducers: {
-        setHasWallet: (state, action) => {
-            state.hasWallet = action.payload;
-        },
-        setIsCorrectChain: (state, action) => {
-            state.isCorrectChain = action.payload;
-        },
-        setAddress: (state, action) => {
-            state.address = action.payload;
-        },
-        setCost: (state, action) => {
-            state.cost = action.payload;
-        },
-        setColor: (state, action) => {
-            const { x, y } = action.payload;
-            state.colorMatrix[x][y] = state.colorIndex;
-        },
-        setColorIndex: (state, action) => {
-            state.colorIndex = action.payload;
-        },
-        clearColorMatrix: (state, action) => {
-            state.colorMatrix = initialColorMatrix(GRID_SIZE);
-        },
-        setAddressTokens: (state, action) => {
-            const { address, tokens } = action.payload;
-            if (!state.addressTokens[address] || state.addressTokens[address].length !== tokens.length) {
-                state.addressTokens[address] = tokens;
-            }
-        },
-        setToken: (state, action) => {
-            const token = action.payload;
-            if (!state.tokens[token.tokenId]) {
-                state.tokens[token.tokenId] = token;
-            }
-        },
-    },
-});
-
 const {
     setHasWallet,
     setIsCorrectChain,
@@ -121,34 +47,19 @@ const {
     clearColorMatrix,
     setAddressTokens,
     setToken,
-} = slice.actions;
-const store = configureStore({
-    reducer: slice.reducer,
-});
+} = actions;
 
-const selectHasWallet = state => state.hasWallet;
-const selectIsCorrectChain = state => state.isCorrectChain;
-const selectAddress = state => state.address;
-const selectCost = state => state.cost;
-const selectColorMatrix = state => state.colorMatrix;
-const selectColorIndex = state => state.colorIndex;
-const selectRenderedSvg = state => {
-    const cm = selectColorMatrix(state);
-    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${GRID_SIZE} ${GRID_SIZE}">`;
-    for (let x=0; x < cm.length; x++) {
-        for (let y=0; y < cm[x].length; y++) {
-            svg += `<rect width="1" height="1" x="${x}" y="${y}" fill="${colors[cm[x][y]]}" />`;
-        }
-    }
-    svg += `</svg>`;
-    return svg;
-};
-const selectAddressTokens = address => state => {
-    return (state.addressTokens[address] || []);
-};
-const selectToken = tokenId => state => {
-    return state.tokens[tokenId];
-};
+const {
+    selectHasWallet,
+    selectIsCorrectChain,
+    selectAddress,
+    selectCost,
+    selectColorMatrix,
+    selectColorIndex,
+    selectRenderedSvg,
+    selectAddressTokens,
+    selectToken,
+} = selectors;
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
@@ -250,7 +161,7 @@ function PfpSvg() {
                 onClick={svgOnClick}
                 onMouseMove={svgOnMouseMove}
                 onTouchMove={svgOnTouchMove}>
-            {cm.map((row, x) => row.map((colorIndex, y) => <rect key={k(x,y)} width="1" height="1" x={x} y={y} fill={colors[colorIndex]} />)).flat()}
+            {cm.map((row, x) => row.map((colorIndex, y) => <rect key={k(x,y)} width="1" height="1" x={x} y={y} fill={COLORS[colorIndex]} />)).flat()}
         </svg>
     );
 }
@@ -265,15 +176,15 @@ function Pfp() {
 
 function ColorPicker() {
     const currentColorIndex = useSelector(selectColorIndex);
-    const viewBox = `0 0 ${colors.length} 1`;
+    const viewBox = `0 0 ${COLORS.length} 1`;
     const onClick = (e) => {
         const elem = e.target.parentElement.getBoundingClientRect();
-        store.dispatch(setColorIndex(Math.floor(colors.length * ((e.clientX - elem.left) / elem.width))));
+        store.dispatch(setColorIndex(Math.floor(COLORS.length * ((e.clientX - elem.left) / elem.width))));
     }
     return (
         <div className="ColorPicker">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox={viewBox} onClick={onClick}>
-                {colors.map((color, index) => {
+                {COLORS.map((color, index) => {
                     const current = (index === currentColorIndex);
                     return (
                         <rect key={index}
