@@ -10,28 +10,18 @@ import {
 } from 'react-router-dom';
 import { NFTStorage, Blob } from 'nft.storage';
 import { ethers } from 'ethers';
-import PfperABI from './Pfper.js';
 import './App.css';
 import { GRID_SIZE, CELL_SIZE, COLORS } from './constants.js';
 import { store, actions, selectors } from './database.js';
-
-// MAKE SURE TO ONLY INCLUDE THE RIGHT NETWORK
-import { PFPER_CONTRACT_ADDRESS, NETWORK_PARAMS } from './network/arbitrum.js';
-//import { PFPER_CONTRACT_ADDRESS, NETWORK_PARAMS } from './network/hardhat.js';
+import { NETWORK_PARAMS } from './network.js';
+import { connectWalletOnClick, isCorrectChainAsync, loadContract, switchChain } from './wallet.js';
+import { retryOperation } from './util.js';
+import Home from './views/home.js';
 
 const Buffer = require('buffer/').Buffer;
 
 const NFT_STORAGE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQxMjQyODZDQzQ1OTE0YmE4QjBiNkM2MUQxMGQ4YzVkODNlM2RlMzciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1Njc2NDEyODgzMywibmFtZSI6InBmcGVyIn0.p_p2aIpWY5i3ez_s5YYdP-4mUm0BgM-fK3VS_pI3Nkg';
 const nftStorageClient = new NFTStorage({ token: NFT_STORAGE_API_KEY });
-
-function loadContract(isSigner) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    let p = provider;
-    if (isSigner) {
-        p = provider.getSigner();
-    }
-    return new ethers.Contract(PFPER_CONTRACT_ADDRESS, PfperABI, p);
-}
 
 function wrapIpfs(url) {
     return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
@@ -40,8 +30,6 @@ function wrapIpfs(url) {
 const {
     setHasWallet,
     setIsCorrectChain,
-    setAddress,
-    setCost,
     setColor,
     setColorIndex,
     clearColorMatrix,
@@ -60,63 +48,6 @@ const {
     selectAddressTokens,
     selectToken,
 } = selectors;
-
-const wait = ms => new Promise(r => setTimeout(r, ms));
-
-const retryOperation = (operation, delay, retries) => new Promise((resolve, reject) => {
-    return operation()
-        .then(resolve)
-        .catch(reason => {
-            if (retries > 0) {
-                return wait(delay)
-                    .then(retryOperation.bind(null, operation, delay, retries-1))
-                    .then(resolve)
-                    .catch(reject);
-            }
-            return reject(reason);
-        });
-});
-
-function isCorrectChain() {
-    if (window.ethereum) {
-        const currentChainId = ethers.BigNumber.from(window.ethereum.networkVersion);
-        return (currentChainId.toHexString() === NETWORK_PARAMS.chainId);
-    } else {
-        return false;
-    }
-}
-
-async function isCorrectChainAsync() {
-    return isCorrectChain();
-}
-
-async function switchChain() {
-    return window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: NETWORK_PARAMS.chainId }],
-    }).catch(error => {
-        if (error.code === 4902) {
-            return window.ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [NETWORK_PARAMS],
-            });
-        }
-    });
-}
-
-async function connectWalletOnClick(e) {
-    if (!isCorrectChain()) {
-        await switchChain();
-    }
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    provider.send('eth_requestAccounts', [])
-        .then(([address]) => {
-            store.dispatch(setAddress(address));
-            return loadContract().getCost();
-        }).then(cost => {
-            store.dispatch(setCost(ethers.utils.formatEther(cost)));
-        });
-}
 
 function svgPaint(p, elem) {
     const rect = elem.getBoundingClientRect();
@@ -247,31 +178,6 @@ function Editor() {
             <MintBar />
             <ColorPicker />
             <Pfp />
-        </div>
-    );
-}
-
-function Home() {
-    const address = useSelector(selectAddress);
-    return (
-        <div className="Home">
-            <h1>pfper</h1>
-            <p>Draw your own pixelart!</p>
-            <p>Upload it to IPFS, mint it as an ERC-721 to {NETWORK_PARAMS.chainName}.</p>
-            <p>Keep it, use it as your PFP, sell it, give it away. Whatever you wanna do, it's yours.</p>
-            <p>The point is that it will exist forever and you don't have to rely on me or this dumb website. You draw your pixelart and store it on the internet, and it'll always be there.</p>
-            <p>Note that this is not some hype project. You draw a pfper, and you pay to have it recorded and saved and available. I have no idea if someone will value your effort higher than what it cost for you to mint it.</p>
-            <p>The only restriction is that you cannot mint something that has already been minted, either by you or anyone else. Every one of these is guaranteed to be unique.</p>
-            <p className="editor-link"><Link to="/editor">Enter the Editor!</Link></p>
-            {window.ethereum && address && <p>You have connected your wallet: <Link to={`/address/${address}`}>{address}</Link>.</p>}
-            {window.ethereum && !address && <p>If you want to be able to mint it, <button onClick={connectWalletOnClick}>connect your wallet</button>.</p>}
-            {!window.ethereum && <p>In you want to be able to mint it, you will need to install a wallet.</p>}
-            <p>You may feel more confident if you can read what the code is going to do, so here's some links:</p>
-            <ul>
-                <li><a href="https://github.com/sirsean/pfper" target="_blank" rel="noreferrer">Github: App</a></li>
-                <li><a href="https://github.com/sirsean/pfper-contract" target="_blank" rel="noreferrer">Github: Contract</a></li>
-                <li><a href="https://arbiscan.io/address/0xcf4fd95771aeb088c50aec7ea8df8c11c034ffb3" target="_blank" rel="noreferrer">Arbiscan: Contract</a></li>
-            </ul>
         </div>
     );
 }

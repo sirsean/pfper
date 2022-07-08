@@ -1,0 +1,6 @@
+// MAKE SURE TO ONLY INCLUDE THE RIGHT NETWORK
+import { PFPER_CONTRACT_ADDRESS as ADDRESS, NETWORK_PARAMS as PARAMS } from './network/arbitrum.js';
+//import { PFPER_CONTRACT_ADDRESS as ADDRESS, NETWORK_PARAMS as PARAMS } from './network/hardhat.js';
+
+export const PFPER_CONTRACT_ADDRESS = ADDRESS;
+export const NETWORK_PARAMS = PARAMS;
