@@ -6,17 +6,14 @@ import {
     Route,
     useNavigate,
 } from 'react-router-dom';
-import { NFTStorage, Blob } from 'nft.storage';
 import './App.css';
 import { GRID_SIZE, CELL_SIZE, COLORS } from './constants.js';
 import { store, actions, selectors } from './database.js';
 import { connectWalletOnClick, loadContract } from './wallet.js';
+import { encodeBlob, storeCar } from './storage.js';
 import Home from './views/home.js';
 import Address from './views/address.js';
 import Token from './views/token.js';
-
-const NFT_STORAGE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQxMjQyODZDQzQ1OTE0YmE4QjBiNkM2MUQxMGQ4YzVkODNlM2RlMzciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1Njc2NDEyODgzMywibmFtZSI6InBmcGVyIn0.p_p2aIpWY5i3ez_s5YYdP-4mUm0BgM-fK3VS_pI3Nkg';
-const nftStorageClient = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 const {
     setColor,
@@ -127,12 +124,12 @@ function MintBar() {
                 const contract = loadContract(true);
                 await Promise.all([
                     contract.getCost(),
-                    NFTStorage.encodeBlob(new Blob([svg])),
+                    encodeBlob(svg),
                 ]).then(([cost, { cid, car }]) => {
                     return contract.mintPfp(cid.toString(), { value: cost })
                         .then(tx => tx.wait())
                         .then(receipt => {
-                            return nftStorageClient.storeCar(car);
+                            return storeCar(car);
                         });
                 }).then(r => {
                     store.dispatch(clearColorMatrix());
