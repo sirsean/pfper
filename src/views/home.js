@@ -24,6 +24,7 @@ export default function Home() {
                 <li><a href="https://github.com/sirsean/pfper" target="_blank" rel="noreferrer">Github: App</a></li>
                 <li><a href="https://github.com/sirsean/pfper-contract" target="_blank" rel="noreferrer">Github: Contract</a></li>
                 <li><a href="https://arbiscan.io/address/0xcf4fd95771aeb088c50aec7ea8df8c11c034ffb3" target="_blank" rel="noreferrer">Arbiscan: Contract</a></li>
+                <li><a href="https://stratosnft.io/collection/pfper" target="_blank" rel="noreferrer">Stratos NFT Marketplace</a></li>
             </ul>
         </div>
     );
