@@ -1,12 +1,12 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit';
 import { GRID_SIZE, COLORS } from './constants.js';
 
-const initialColorMatrix = (size) => {
+const initialColorMatrix = (size, color) => {
     let rows = new Array(size);
     for (let x=0; x < size; x++) {
         rows[x] = new Array(size);
         for (let y=0; y < size; y++) {
-            rows[x][y] = 0;
+            rows[x][y] = color;
         }
     }
     return rows;
@@ -21,7 +21,7 @@ const slice = createSlice({
         cost: null,
         addressTokens: {},
         tokens: {},
-        colorMatrix: initialColorMatrix(GRID_SIZE),
+        colorMatrix: initialColorMatrix(GRID_SIZE, COLORS[0]),
         colorIndex: 0,
     },
     reducers: {
@@ -39,13 +39,13 @@ const slice = createSlice({
         },
         setColor: (state, action) => {
             const { x, y } = action.payload;
-            state.colorMatrix[x][y] = state.colorIndex;
+            state.colorMatrix[x][y] = COLORS[state.colorIndex];
         },
         setColorIndex: (state, action) => {
             state.colorIndex = action.payload;
         },
         clearColorMatrix: (state, action) => {
-            state.colorMatrix = initialColorMatrix(GRID_SIZE);
+            state.colorMatrix = initialColorMatrix(GRID_SIZE, COLORS[0]);
         },
         setAddressTokens: (state, action) => {
             const { address, tokens } = action.payload;
@@ -87,7 +87,7 @@ export const selectRenderedSvg = state => {
     let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${GRID_SIZE} ${GRID_SIZE}">`;
     for (let x=0; x < cm.length; x++) {
         for (let y=0; y < cm[x].length; y++) {
-            svg += `<rect width="1" height="1" x="${x}" y="${y}" fill="${COLORS[cm[x][y]]}" />`;
+            svg += `<rect width="1" height="1" x="${x}" y="${y}" fill="${cm[x][y]}" />`;
         }
     }
     svg += `</svg>`;

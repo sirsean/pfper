@@ -47,7 +47,7 @@ function PfpSvg() {
                 onClick={svgOnClick}
                 onMouseMove={svgOnMouseMove}
                 onTouchMove={svgOnTouchMove}>
-            {cm.map((row, x) => row.map((colorIndex, y) => <rect key={k(x,y)} width="1" height="1" x={x} y={y} fill={COLORS[colorIndex]} />)).flat()}
+            {cm.map((row, x) => row.map((color, y) => <rect key={k(x,y)} width="1" height="1" x={x} y={y} fill={color} />)).flat()}
         </svg>
     );
 }
