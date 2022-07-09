@@ -4,43 +4,32 @@ import {
     BrowserRouter as Router,
     Routes,
     Route,
-    Link,
-    useParams,
     useNavigate,
 } from 'react-router-dom';
 import { NFTStorage, Blob } from 'nft.storage';
 import './App.css';
 import { GRID_SIZE, CELL_SIZE, COLORS } from './constants.js';
 import { store, actions, selectors } from './database.js';
-import { NETWORK_PARAMS } from './network.js';
-import { connectWalletOnClick, isCorrectChainAsync, loadContract, switchChain, fetchToken } from './wallet.js';
-import { retryOperation } from './util.js';
-import { wrapIpfs } from './ipfs.js';
-import { Header, NoWallet, SwitchChain } from './views/layout.js';
+import { connectWalletOnClick, loadContract } from './wallet.js';
 import Home from './views/home.js';
 import Address from './views/address.js';
+import Token from './views/token.js';
 
 const NFT_STORAGE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQxMjQyODZDQzQ1OTE0YmE4QjBiNkM2MUQxMGQ4YzVkODNlM2RlMzciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1Njc2NDEyODgzMywibmFtZSI6InBmcGVyIn0.p_p2aIpWY5i3ez_s5YYdP-4mUm0BgM-fK3VS_pI3Nkg';
 const nftStorageClient = new NFTStorage({ token: NFT_STORAGE_API_KEY });
 
 const {
-    setHasWallet,
-    setIsCorrectChain,
     setColor,
     setColorIndex,
     clearColorMatrix,
-    setToken,
 } = actions;
 
 const {
-    selectHasWallet,
-    selectIsCorrectChain,
     selectAddress,
     selectCost,
     selectColorMatrix,
     selectColorIndex,
     selectRenderedSvg,
-    selectToken,
 } = selectors;
 
 function svgPaint(p, elem) {
@@ -174,54 +163,6 @@ function Editor() {
             <Pfp />
         </div>
     );
-}
-
-function Token() {
-    const { tokenId } = useParams();
-    const token = useSelector(selectToken(tokenId));
-    const hasWallet = useSelector(selectHasWallet);
-    const correctChain = useSelector(selectIsCorrectChain);
-    const load = React.useCallback(async () => {
-        const contract = loadContract();
-        return fetchToken(contract, tokenId).then(token => {
-            store.dispatch(setToken(token));
-        });
-    }, [tokenId]);
-    React.useEffect(() => {
-        store.dispatch(setHasWallet(!!window.ethereum));
-        const checkChain = async () => {
-            store.dispatch(setIsCorrectChain(await retryOperation(isCorrectChainAsync, 100, 5)));
-        };
-        checkChain();
-    }, []);
-    if (!hasWallet) {
-        return <NoWallet />;
-    } else if (!correctChain) {
-        return <SwitchChain />;
-    } else {
-        load();
-        if (token) {
-            const url = wrapIpfs(token.data.image);
-            const ownerHref = `/address/${token.owner}`;
-            const authorHref = `/address/${token.author}`;
-            return (
-                <div className="Token">
-                    <Header />
-                    <div className="pfp" style={{width: GRID_SIZE * CELL_SIZE, height: GRID_SIZE * CELL_SIZE}}>
-                        <h1>pfper #{tokenId}</h1>
-                        <object data={url} type="image/svg+xml">{token.data.image}</object>
-                        <table>
-                            <tbody>
-                                <tr><th>Owner</th><td><Link to={ownerHref}>{token.owner}</Link></td></tr>
-                                <tr><th>Author</th><td><Link to={authorHref}>{token.author}</Link></td></tr>
-                                <tr><th>Download</th><td><a href={url} target="_blank" rel="noreferrer">SVG</a></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            );
-        }
-    }
 }
 
 function App() {
