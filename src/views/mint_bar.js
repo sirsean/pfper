@@ -3,15 +3,9 @@ import { useSelector } from 'react-redux';
 import {
     useNavigate,
 } from 'react-router-dom';
-import { store, selectors, clearColorMatrix } from '../database.js';
+import { store, selectAddress, selectCost, selectRenderedSvg, clearColorMatrix } from '../database.js';
 import { connectWalletOnClick, loadContract } from '../wallet.js';
 import { encodeBlob, storeCar } from '../storage.js';
-
-const {
-    selectAddress,
-    selectCost,
-    selectRenderedSvg,
-} = selectors;
 
 export default function MintBar() {
     const address = useSelector(selectAddress);

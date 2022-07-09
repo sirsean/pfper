@@ -1,12 +1,8 @@
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { NETWORK_PARAMS } from '../network.js';
-import { selectors } from '../database.js';
+import { selectAddress } from '../database.js';
 import { connectWalletOnClick } from '../wallet.js';
-
-const {
-    selectAddress,
-} = selectors;
 
 export default function Home() {
     const address = useSelector(selectAddress);

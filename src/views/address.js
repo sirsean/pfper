@@ -4,17 +4,19 @@ import {
     Link,
     useParams,
 } from 'react-router-dom';
-import { store, selectors, setHasWallet, setIsCorrectChain, setAddressTokens } from '../database.js';
+import {
+    store,
+    selectHasWallet,
+    selectIsCorrectChain,
+    selectAddressTokens,
+    setHasWallet,
+    setIsCorrectChain,
+    setAddressTokens
+} from '../database.js';
 import { isCorrectChainAsync, loadContract, fetchToken } from '../wallet.js';
 import { retryOperation } from '../util.js';
 import { wrapIpfs } from '../ipfs.js';
 import { Header, NoWallet, SwitchChain } from './layout.js';
-
-const {
-    selectHasWallet,
-    selectIsCorrectChain,
-    selectAddressTokens,
-} = selectors;
 
 function PfperGridItem({ pfper }) {
     const href = `/token/${pfper.tokenId}`;

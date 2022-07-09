@@ -76,28 +76,26 @@ export const store = configureStore({
     reducer: slice.reducer,
 });
 
-export const selectors = {
-    selectHasWallet: state => state.hasWallet,
-    selectIsCorrectChain: state => state.isCorrectChain,
-    selectAddress: state => state.address,
-    selectCost: state => state.cost,
-    selectColorMatrix: state => state.colorMatrix,
-    selectColorIndex: state => state.colorIndex,
-    selectRenderedSvg: state => {
-        const cm = state.colorMatrix;
-        let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${GRID_SIZE} ${GRID_SIZE}">`;
-        for (let x=0; x < cm.length; x++) {
-            for (let y=0; y < cm[x].length; y++) {
-                svg += `<rect width="1" height="1" x="${x}" y="${y}" fill="${COLORS[cm[x][y]]}" />`;
-            }
+export const selectHasWallet = state => state.hasWallet;
+export const selectIsCorrectChain = state => state.isCorrectChain;
+export const selectAddress = state => state.address;
+export const selectCost = state => state.cost;
+export const selectColorMatrix = state => state.colorMatrix;
+export const selectColorIndex = state => state.colorIndex;
+export const selectRenderedSvg = state => {
+    const cm = state.colorMatrix;
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${GRID_SIZE} ${GRID_SIZE}">`;
+    for (let x=0; x < cm.length; x++) {
+        for (let y=0; y < cm[x].length; y++) {
+            svg += `<rect width="1" height="1" x="${x}" y="${y}" fill="${COLORS[cm[x][y]]}" />`;
         }
-        svg += `</svg>`;
-        return svg;
-    },
-    selectAddressTokens: address => state => {
-        return (state.addressTokens[address] || []);
-    },
-    selectToken: tokenId => state => {
-        return state.tokens[tokenId];
-    },
+    }
+    svg += `</svg>`;
+    return svg;
+};
+export const selectAddressTokens = address => state => {
+    return (state.addressTokens[address] || []);
+};
+export const selectToken = tokenId => state => {
+    return state.tokens[tokenId];
 };

@@ -6,16 +6,18 @@ import {
 } from 'react-router-dom';
 import { isCorrectChainAsync, loadContract, fetchToken } from '../wallet.js';
 import { GRID_SIZE, CELL_SIZE } from '../constants.js';
-import { store, selectors, setHasWallet, setIsCorrectChain, setToken } from '../database.js';
-import { retryOperation } from '../util.js';
-import { wrapIpfs } from '../ipfs.js';
-import { Header, NoWallet, SwitchChain } from './layout.js';
-
-const {
+import {
+    store,
     selectHasWallet,
     selectIsCorrectChain,
     selectToken,
-} = selectors;
+    setHasWallet,
+    setIsCorrectChain,
+    setToken
+} from '../database.js';
+import { retryOperation } from '../util.js';
+import { wrapIpfs } from '../ipfs.js';
+import { Header, NoWallet, SwitchChain } from './layout.js';
 
 export default function Token() {
     const { tokenId } = useParams();

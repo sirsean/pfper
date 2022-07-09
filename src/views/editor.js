@@ -1,12 +1,8 @@
 import { useSelector } from 'react-redux';
-import { store, selectors, setColor } from '../database.js';
+import { store, selectColorMatrix, setColor } from '../database.js';
 import { GRID_SIZE, CELL_SIZE, COLORS } from '../constants.js';
 import ColorPicker from './color_picker.js';
 import MintBar from './mint_bar.js';
-
-const {
-    selectColorMatrix,
-} = selectors;
 
 function svgPaint(p, elem) {
     const rect = elem.getBoundingClientRect();

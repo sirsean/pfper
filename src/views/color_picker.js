@@ -1,10 +1,6 @@
 import { useSelector } from 'react-redux';
 import { COLORS } from '../constants.js';
-import { store, selectors, setColorIndex } from '../database.js';
-
-const {
-    selectColorIndex,
-} = selectors;
+import { store, selectColorIndex, setColorIndex } from '../database.js';
 
 export default function ColorPicker() {
     const currentColorIndex = useSelector(selectColorIndex);
