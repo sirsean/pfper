@@ -3,6 +3,8 @@ import { store, actions } from './database.js';
 import { NETWORK_PARAMS, PFPER_CONTRACT_ADDRESS } from './network.js';
 import PfperABI from './Pfper.js';
 
+const Buffer = require('buffer/').Buffer;
+
 const {
     setAddress,
     setCost,
@@ -56,4 +58,17 @@ export async function connectWalletOnClick(e) {
         }).then(cost => {
             store.dispatch(setCost(ethers.utils.formatEther(cost)));
         });
+}
+
+export async function fetchToken(contract, tokenId) {
+    return Promise.all([
+        contract.ownerOf(tokenId),
+        contract.authorOf(tokenId),
+        contract.tokenURI(tokenId),
+    ]).then(([owner, author, uri]) => {
+        const data = JSON.parse(Buffer.from(uri.replace('data:application/json;base64,', ''), 'base64').toString('ascii'));
+        return { owner, author, data,
+            tokenId: ethers.BigNumber.from(tokenId).toNumber(),
+        };
+    });
 }

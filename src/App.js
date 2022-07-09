@@ -9,23 +9,19 @@ import {
     useNavigate,
 } from 'react-router-dom';
 import { NFTStorage, Blob } from 'nft.storage';
-import { ethers } from 'ethers';
 import './App.css';
 import { GRID_SIZE, CELL_SIZE, COLORS } from './constants.js';
 import { store, actions, selectors } from './database.js';
 import { NETWORK_PARAMS } from './network.js';
-import { connectWalletOnClick, isCorrectChainAsync, loadContract, switchChain } from './wallet.js';
+import { connectWalletOnClick, isCorrectChainAsync, loadContract, switchChain, fetchToken } from './wallet.js';
 import { retryOperation } from './util.js';
+import { wrapIpfs } from './ipfs.js';
+import { Header, NoWallet, SwitchChain } from './views/layout.js';
 import Home from './views/home.js';
-
-const Buffer = require('buffer/').Buffer;
+import Address from './views/address.js';
 
 const NFT_STORAGE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQxMjQyODZDQzQ1OTE0YmE4QjBiNkM2MUQxMGQ4YzVkODNlM2RlMzciLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1Njc2NDEyODgzMywibmFtZSI6InBmcGVyIn0.p_p2aIpWY5i3ez_s5YYdP-4mUm0BgM-fK3VS_pI3Nkg';
 const nftStorageClient = new NFTStorage({ token: NFT_STORAGE_API_KEY });
-
-function wrapIpfs(url) {
-    return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
-}
 
 const {
     setHasWallet,
@@ -33,7 +29,6 @@ const {
     setColor,
     setColorIndex,
     clearColorMatrix,
-    setAddressTokens,
     setToken,
 } = actions;
 
@@ -45,7 +40,6 @@ const {
     selectColorMatrix,
     selectColorIndex,
     selectRenderedSvg,
-    selectAddressTokens,
     selectToken,
 } = selectors;
 
@@ -182,34 +176,6 @@ function Editor() {
     );
 }
 
-function Header() {
-    return (
-        <header>
-            <h1><Link to="/">pfper</Link></h1>
-        </header>
-    );
-}
-
-function NoWallet() {
-    return (
-        <div className="NoWallet">
-            <p><em>you need to install a wallet to view this page.</em></p>
-        </div>
-    );
-}
-
-function SwitchChain() {
-    const onClick = async (e) => {
-        switchChain().then(r => window.location.reload());
-    }
-    return (
-        <div className="SwitchChain">
-            <p>to read this data from the blockchain, you need to switch your wallet to {NETWORK_PARAMS.chainName}</p>
-            <p><button onClick={onClick}>Switch to {NETWORK_PARAMS.chainName}</button></p>
-        </div>
-    );
-}
-
 function Token() {
     const { tokenId } = useParams();
     const token = useSelector(selectToken(tokenId));
@@ -255,73 +221,6 @@ function Token() {
                 </div>
             );
         }
-    }
-}
-
-async function fetchToken(contract, tokenId) {
-    return Promise.all([
-        contract.ownerOf(tokenId),
-        contract.authorOf(tokenId),
-        contract.tokenURI(tokenId),
-    ]).then(([owner, author, uri]) => {
-        const data = JSON.parse(Buffer.from(uri.replace('data:application/json;base64,', ''), 'base64').toString('ascii'));
-        return { owner, author, data,
-            tokenId: ethers.BigNumber.from(tokenId).toNumber(),
-        };
-    });
-}
-
-function PfperGridItem({ pfper }) {
-    const href = `/token/${pfper.tokenId}`;
-    const url = wrapIpfs(pfper.data.image);
-    return (
-        <div className="pfp">
-            <h3><Link to={href}>{pfper.data.name}</Link></h3>
-            <object data={url} type="image/svg+xml">{pfper.data.image}</object>
-        </div>
-    );
-}
-
-function Address() {
-    const { address } = useParams();
-    const tokens = useSelector(selectAddressTokens(address));
-    const hasWallet = useSelector(selectHasWallet);
-    const correctChain = useSelector(selectIsCorrectChain);
-    const load = React.useCallback(async () => {
-        const contract = loadContract();
-        return contract.balanceOf(address).then(total => {
-            return Promise.all([...Array(total.toNumber()).keys()].reverse().map(i => contract.tokenOfOwnerByIndex(address, i)));
-        }).then(tokenIds => {
-            return Promise.all(tokenIds.map(tokenId => fetchToken(contract, tokenId)));
-        }).then(tokens => {
-            store.dispatch(setAddressTokens({ address, tokens }));
-        });
-    }, [address]);
-    React.useEffect(() => {
-        store.dispatch(setHasWallet(!!window.ethereum));
-        const checkChain = async () => {
-            store.dispatch(setIsCorrectChain(await retryOperation(isCorrectChainAsync, 100, 5)));
-        };
-        checkChain();
-    }, []);
-    if (!hasWallet) {
-        return <NoWallet />;
-    } else if (!correctChain) {
-        return <SwitchChain />;
-    } else {
-        load();
-        return (
-            <div className="Address">
-                <Header />
-                <h1>{address}</h1>
-            {tokens.length === 0 &&
-                <p><em>this address owns no pfpers</em></p>}
-            {tokens.length > 0 &&
-                <div className="pfpers">
-                    {tokens.map(t => <PfperGridItem key={t.tokenId} pfper={t} />)}
-                </div>}
-            </div>
-        );
     }
 }
 
