@@ -1,14 +1,9 @@
 import { ethers } from 'ethers';
-import { store, actions } from './database.js';
+import { store, setAddress, setCost } from './database.js';
 import { NETWORK_PARAMS, PFPER_CONTRACT_ADDRESS } from './network.js';
 import PfperABI from './Pfper.js';
 
 const Buffer = require('buffer/').Buffer;
-
-const {
-    setAddress,
-    setCost,
-} = actions;
 
 export function loadContract(isSigner) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);

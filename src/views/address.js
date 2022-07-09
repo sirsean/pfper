@@ -4,17 +4,11 @@ import {
     Link,
     useParams,
 } from 'react-router-dom';
-import { store, actions, selectors } from '../database.js';
+import { store, selectors, setHasWallet, setIsCorrectChain, setAddressTokens } from '../database.js';
 import { isCorrectChainAsync, loadContract, fetchToken } from '../wallet.js';
 import { retryOperation } from '../util.js';
 import { wrapIpfs } from '../ipfs.js';
 import { Header, NoWallet, SwitchChain } from './layout.js';
-
-const {
-    setHasWallet,
-    setIsCorrectChain,
-    setAddressTokens,
-} = actions;
 
 const {
     selectHasWallet,

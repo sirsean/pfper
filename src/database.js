@@ -62,7 +62,16 @@ const slice = createSlice({
     },
 });
 
-export const actions = slice.actions;
+export const setHasWallet = slice.actions.setHasWallet;
+export const setIsCorrectChain = slice.actions.setIsCorrectChain;
+export const setAddress = slice.actions.setAddress;
+export const setCost = slice.actions.setCost;
+export const setColor = slice.actions.setColor;
+export const setColorIndex = slice.actions.setColorIndex;
+export const clearColorMatrix = slice.actions.clearColorMatrix;
+export const setAddressTokens = slice.actions.setAddressTokens;
+export const setToken = slice.actions.setToken;
+
 export const store = configureStore({
     reducer: slice.reducer,
 });

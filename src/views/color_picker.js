@@ -1,10 +1,6 @@
 import { useSelector } from 'react-redux';
 import { COLORS } from '../constants.js';
-import { store, actions, selectors } from '../database.js';
-
-const {
-    setColorIndex,
-} = actions;
+import { store, selectors, setColorIndex } from '../database.js';
 
 const {
     selectColorIndex,

@@ -3,13 +3,9 @@ import { useSelector } from 'react-redux';
 import {
     useNavigate,
 } from 'react-router-dom';
-import { store, actions, selectors } from '../database.js';
+import { store, selectors, clearColorMatrix } from '../database.js';
 import { connectWalletOnClick, loadContract } from '../wallet.js';
 import { encodeBlob, storeCar } from '../storage.js';
-
-const {
-    clearColorMatrix,
-} = actions;
 
 const {
     selectAddress,
