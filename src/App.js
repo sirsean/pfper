@@ -4,28 +4,22 @@ import {
     BrowserRouter as Router,
     Routes,
     Route,
-    useNavigate,
 } from 'react-router-dom';
 import './App.css';
 import { GRID_SIZE, CELL_SIZE, COLORS } from './constants.js';
 import { store, actions, selectors } from './database.js';
-import { connectWalletOnClick, loadContract } from './wallet.js';
-import { encodeBlob, storeCar } from './storage.js';
 import Home from './views/home.js';
 import Address from './views/address.js';
 import Token from './views/token.js';
 import ColorPicker from './views/color_picker.js';
+import MintBar from './views/mint_bar.js';
 
 const {
     setColor,
-    clearColorMatrix,
 } = actions;
 
 const {
-    selectAddress,
-    selectCost,
     selectColorMatrix,
-    selectRenderedSvg,
 } = selectors;
 
 function svgPaint(p, elem) {
@@ -82,42 +76,6 @@ function Pfp() {
             <PfpSvg />
         </div>
     );
-}
-
-function MintBar() {
-    const address = useSelector(selectAddress);
-    const cost = useSelector(selectCost);
-    const navigate = useNavigate();
-    const onClick = React.useCallback(
-        async (e) => {
-            const state = store.getState();
-            const svg = selectRenderedSvg(state);
-            if (svg && address) {
-                const contract = loadContract(true);
-                await Promise.all([
-                    contract.getCost(),
-                    encodeBlob(svg),
-                ]).then(([cost, { cid, car }]) => {
-                    return contract.mintPfp(cid.toString(), { value: cost })
-                        .then(tx => tx.wait())
-                        .then(receipt => {
-                            return storeCar(car);
-                        });
-                }).then(r => {
-                    store.dispatch(clearColorMatrix());
-                    navigate(`/address/${address}`);
-                });
-            }
-        }, [address, navigate]);
-    if (window.ethereum) {
-        const mintable = (address && cost);
-        return (
-            <div className="MintBar">
-                {!mintable && <button onClick={connectWalletOnClick}>Connect</button>}
-                {mintable && <button onClick={onClick}>Mint for {cost} ETH</button>}
-            </div>
-        );
-    }
 }
 
 function Editor() {
