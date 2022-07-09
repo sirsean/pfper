@@ -1,5 +1,5 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit';
-import { GRID_SIZE, COLORS } from './constants.js';
+import { GRID_SIZE } from './constants.js';
 
 const initialColorMatrix = (size, color) => {
     let rows = new Array(size);
@@ -21,8 +21,18 @@ const slice = createSlice({
         cost: null,
         addressTokens: {},
         tokens: {},
-        colorMatrix: initialColorMatrix(GRID_SIZE, COLORS[0]),
+        colorMatrix: initialColorMatrix(GRID_SIZE, '#FCFBED'),
         colorIndex: 0,
+        palette: [
+            '#FCFBED', // navajo cream
+            '#1F170C', // not black
+            '#802E36', // apple blossom
+            '#2E79BF', // wells beach
+            '#26A38E', // northern lights
+            '#A85516', // caramel square
+            '#FACF32', // jacks pot
+            '#4C379E', // blackened periwinkle
+        ],
     },
     reducers: {
         setHasWallet: (state, action) => {
@@ -37,15 +47,15 @@ const slice = createSlice({
         setCost: (state, action) => {
             state.cost = action.payload;
         },
-        setColor: (state, action) => {
+        setColorPoint: (state, action) => {
             const { x, y } = action.payload;
-            state.colorMatrix[x][y] = COLORS[state.colorIndex];
+            state.colorMatrix[x][y] = state.palette[state.colorIndex];
         },
         setColorIndex: (state, action) => {
             state.colorIndex = action.payload;
         },
         clearColorMatrix: (state, action) => {
-            state.colorMatrix = initialColorMatrix(GRID_SIZE, COLORS[0]);
+            state.colorMatrix = initialColorMatrix(GRID_SIZE, state.palette[0]);
         },
         setAddressTokens: (state, action) => {
             const { address, tokens } = action.payload;
@@ -59,6 +69,10 @@ const slice = createSlice({
                 state.tokens[token.tokenId] = token;
             }
         },
+        updatePalette: (state, action) => {
+            const { colorIndex, color } = action.payload;
+            state.palette[colorIndex] = color;
+        },
     },
 });
 
@@ -66,11 +80,12 @@ export const setHasWallet = slice.actions.setHasWallet;
 export const setIsCorrectChain = slice.actions.setIsCorrectChain;
 export const setAddress = slice.actions.setAddress;
 export const setCost = slice.actions.setCost;
-export const setColor = slice.actions.setColor;
+export const setColorPoint = slice.actions.setColorPoint;
 export const setColorIndex = slice.actions.setColorIndex;
 export const clearColorMatrix = slice.actions.clearColorMatrix;
 export const setAddressTokens = slice.actions.setAddressTokens;
 export const setToken = slice.actions.setToken;
+export const updatePalette = slice.actions.updatePalette;
 
 export const store = configureStore({
     reducer: slice.reducer,
@@ -99,3 +114,5 @@ export const selectAddressTokens = address => state => {
 export const selectToken = tokenId => state => {
     return state.tokens[tokenId];
 };
+
+export const selectPalette = state => state.palette;

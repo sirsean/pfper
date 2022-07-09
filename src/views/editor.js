@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
-import { store, selectColorMatrix, setColor } from '../database.js';
-import { GRID_SIZE, CELL_SIZE, COLORS } from '../constants.js';
+import { store, selectColorMatrix, setColorPoint } from '../database.js';
+import { GRID_SIZE, CELL_SIZE } from '../constants.js';
 import ColorPicker from './color_picker.js';
 import MintBar from './mint_bar.js';
 
@@ -8,7 +8,7 @@ function svgPaint(p, elem) {
     const rect = elem.getBoundingClientRect();
     const x = Math.floor((p.x - rect.left) / CELL_SIZE);
     const y = Math.floor((p.y - rect.top) / CELL_SIZE);
-    store.dispatch(setColor({ x, y }));
+    store.dispatch(setColorPoint({ x, y }));
 }
 
 function svgOnClick(e) {
