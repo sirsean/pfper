@@ -67,8 +67,10 @@ export default function Editor() {
     }
     return (
         <div className="Editor" onContextMenu={block}>
-            <MintBar />
-            <ColorPicker />
+            <div className="editor-controls">
+                <MintBar />
+                <ColorPicker />
+            </div>
             <Pfp />
         </div>
     );
